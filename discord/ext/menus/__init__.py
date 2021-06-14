@@ -677,7 +677,8 @@ class Menu(metaclass=_MenuMeta):
         wait: :class:`bool`
             Whether to wait until the menu is completed before
             returning back to the caller.
-
+        files: :class:`list`
+            A list of files to upload along with initial message.
         Raises
         -------
         MenuError
