@@ -962,9 +962,8 @@ class MenuPages(Menu):
         page = await self._source.get_page(0)
         kwargs = await self._get_kwargs_from_page(page)
         if files:
-            return await channel.send(**kwargs, files=files)
-        else:
-            return await channel.send(**kwargs)
+            kwargs['files'] = files
+        return await channel.send(**kwargs)
 
     async def start(self, ctx, *, channel=None, wait=False):
         await self._source._prepare_once()
