@@ -662,7 +662,7 @@ class Menu(metaclass=_MenuMeta):
         # which would require awaiting, such as stopping an erroring menu.
         log.exception("Unhandled exception during menu update.", exc_info=exc)
 
-    async def start(self, ctx, *, channel=None, wait=False):
+    async def start(self, ctx, *, channel=None, wait=False, files=None):
         """|coro|
 
         Starts the interactive menu session.
@@ -704,7 +704,7 @@ class Menu(metaclass=_MenuMeta):
         self._event.clear()
         msg = self.message
         if msg is None:
-            self.message = msg = await self.send_initial_message(ctx, channel)
+            self.message = msg = await self.send_initial_message(ctx, channel, files)
 
         if self.should_add_reactions():
             # Start the task first so we can listen to reactions before doing anything
@@ -950,7 +950,7 @@ class MenuPages(Menu):
         kwargs = await self._get_kwargs_from_page(page)
         await self.message.edit(**kwargs)
 
-    async def send_initial_message(self, ctx, channel):
+    async def send_initial_message(self, ctx, channel, files=None):
         """|coro|
 
         The default implementation of :meth:`Menu.send_initial_message`
@@ -960,7 +960,10 @@ class MenuPages(Menu):
         """
         page = await self._source.get_page(0)
         kwargs = await self._get_kwargs_from_page(page)
-        return await channel.send(**kwargs)
+        if files:
+            return await channel.send(**kwargs, files=files)
+        else:
+            return await channel.send(**kwargs)
 
     async def start(self, ctx, *, channel=None, wait=False):
         await self._source._prepare_once()
